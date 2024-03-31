@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CMSIS;..\FWLIB\inc;..\USER;..\HARDWARE\inc;..\MODULE\OLED;..\MODULE\PWM</IncludePath>
+              <IncludePath>..\CMSIS;..\FWLIB\inc;..\USER;..\SYSTEM\sys;..\HARDWARE\inc;..\MODULE\OLED;..\MODULE\PWM</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -578,6 +578,16 @@
               <FileName>pwm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\MODULE\PWM\pwm.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>SYSTEM</GroupName>
+          <Files>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SYSTEM\sys\sys.c</FilePath>
             </File>
           </Files>
         </Group>
