@@ -4,6 +4,7 @@
 #include "usart.h"
 #include "adc.h"
 #include "OLED.h"
+#include "pwm.h"
 #include "stdio.h"
 
 int main(void)
@@ -13,6 +14,9 @@ int main(void)
 	Usart_Init(115200);//串口初始化
 	ADC_init();        //ADC初始化
 	OLED_Init();       //OLED初始化
+	//PWM_Init(899,0);  //(899+1)*(0+1)/72000000hz =  0.0000125s  换成频率为80khz
+	//TIM_SetCompare3(TIM3,450);//设置PWM占空比
+	//TIM_SetCompare4(TIM3,450);//设置PWM占空比
 	printf("Balance Car\r\n");
 	OLED_ShowString(1, 1, "Balance Car");
 	OLED_ShowString(2, 1, "---------------");
