@@ -10,9 +10,9 @@ void ADC_init(void)
 	RCC_ADCCLKConfig(RCC_PCLK2_Div6);  //PCLK2 6分频后作为ADC时钟。ADC时钟为72mhz/6= 12mhz
 	
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AIN;    //模拟输入
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;        //PA0
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_2;        //PA2
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;//50MHZ
-	GPIO_Init(GPIOA, &GPIO_InitStruct);           //PA0引脚初始化
+	GPIO_Init(GPIOA, &GPIO_InitStruct);           //PA2引脚初始化
 	
 	ADC_InitStruct.ADC_Mode = ADC_Mode_Independent;    //ADC独立模式
 	ADC_InitStruct.ADC_ScanConvMode  = DISABLE;        //不打开扫描转换模式
@@ -24,8 +24,8 @@ void ADC_init(void)
  
 	ADC_Cmd(ADC1, ENABLE);//使能ADC1
 	
-	//配置ADC1通道0，规则采样顺序1，采样时间239.5周期
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_239Cycles5);
+	//配置ADC1通道2，规则采样顺序1，采样时间239.5周期
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_239Cycles5);
 	
 	ADC_ResetCalibration(ADC1);//开始复位校准
 	while(ADC_GetResetCalibrationStatus(ADC1));//等待复位校准完成
