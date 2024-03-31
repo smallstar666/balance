@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CMSIS;..\FWLIB\inc;..\USER;..\HARDWARE\inc</IncludePath>
+              <IncludePath>..\CMSIS;..\FWLIB\inc;..\USER;..\HARDWARE\inc;..\MODULE\OLED</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -563,6 +563,16 @@
               <FileName>adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\src\adc.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MODULE</GroupName>
+          <Files>
+            <File>
+              <FileName>OLED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MODULE\OLED\OLED.c</FilePath>
             </File>
           </Files>
         </Group>
