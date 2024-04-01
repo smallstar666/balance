@@ -9,6 +9,39 @@ int fputc(int ch,FILE *f)
 	return ch;
 }
 
+/**
+ * @func	fputcc
+ * @brief	发送一个字节数据到USARTx
+			为Motion_Driver库提供串口打印接口
+ * @param 			
+	   @arg ch : 一字节数据
+ * @retval	返回指定字节数据
+ **/
+int fputcc(int ch)
+{
+	/* 发送一个字节数据到USARTx */
+	USART_SendData(USART1, (uint8_t) ch);
+		
+	/* 等待发送完毕 */
+	while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET);		
+	
+	return (ch);
+}
+
+/**
+ * @func	USART_SendChar
+ * @brief	控制串口发送一个字符
+ * @param 	
+	   @arg chr : 要发送的字符
+ * @retval	无
+ **/
+void USART_SendChar(uint8_t chr)
+{
+	/* 循环发送,直到发送完毕 */
+	while(USART_GetFlagStatus(USART1,USART_FLAG_TXE)==RESET); 
+	USART_SendData(USART1,chr);
+}
+
 void Usart_Init(uint32_t bound)
 {
 	GPIO_InitTypeDef  GPIO_InitStructure;

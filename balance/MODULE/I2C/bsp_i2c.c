@@ -1,5 +1,6 @@
 #include "stm32f10x.h"
 #include "bsp_i2c.h"
+#include "mpu6050.h"
 #include "delay.h"
 
 //采用模拟I2C
@@ -218,6 +219,7 @@ int Sensors_I2C_WriteRegister(uint8_t slave_address,uint8_t register_address,uin
 		I2C_WaitAck();
 	}
     I2C_Stop();                      //发送停止信号
+	//Delay_ms(2);
 	return  ret;
 }
 
@@ -243,5 +245,48 @@ int Sensors_I2C_ReadRegister(uint8_t slave_address,uint8_t register_address,uint
 	}
 	I2C_WaitAck();
 	I2C_Stop();                       //停止信号
+	//Delay_ms(2);
 	return  ret;	
 }
+
+
+
+//-------------------------------------暂时保留-------------------------------------//
+//**************************************
+//向I2C设备写入一个字节数据
+//**************************************
+void Single_WriteI2C(uint8_t REG_Address,uint8_t REG_data)
+{
+    I2C_Start();                  //起始信号
+    I2C_SendByte(SlaveAddress);   //发送设备地址+写信号
+	I2C_WaitAck();
+    I2C_SendByte(REG_Address);    //内部寄存器地址
+	I2C_WaitAck();
+    I2C_SendByte(REG_data);       //内部寄存器数据
+	I2C_WaitAck();
+    I2C_Stop();                   //发送停止信号
+	Delay_ms(2);
+}
+
+//**************************************
+//从I2C设备读取一个字节数据
+//**************************************
+uint8_t Single_ReadI2C(uint8_t REG_Address)
+{
+	uint8_t REG_data;
+	I2C_Start();                   //起始信号
+	I2C_SendByte(SlaveAddress);    //发送设备地址+写信号
+	I2C_WaitAck();
+	I2C_SendByte(REG_Address);     //发送存储单元地址，从0开始
+	I2C_WaitAck();
+	I2C_Stop();  				   //停止信号
+	I2C_Start();                   //起始信号
+	I2C_SendByte(SlaveAddress+1);  //发送设备地址+读信号
+	I2C_WaitAck();
+	REG_data=I2C_ReadByte();       //读出寄存器数据
+	I2C_WaitAck();                	   //接收应答信号
+	I2C_Stop();                    //停止信号
+	Delay_ms(2);
+	return REG_data;
+}
+//-------------------------------------暂时保留-------------------------------------//
