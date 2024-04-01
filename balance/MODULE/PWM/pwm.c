@@ -7,7 +7,7 @@ void PWM_Init(uint16_t per,uint16_t psc)
 	GPIO_InitTypeDef GPIO_InitStruct;    //定义GPIO的结构体
 	TIM_OCInitTypeDef TIM_OCInitStruct;  //定义输出比较结构体
 	
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB|RCC_APB2Periph_AFIO,ENABLE);//打开GPIOA的时钟、复用时钟
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB|RCC_APB2Periph_AFIO,ENABLE);//打开GPIOB的时钟、复用时钟
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,ENABLE);//打开定时器3时钟
 	
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;//复用推挽输出
