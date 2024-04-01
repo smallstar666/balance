@@ -868,8 +868,8 @@ void MPU6050_FUNC1(void)
  **/
 void MPU6050_FUNC2(void)
 {
-	while(1)
-	{
+	//while(1)
+	//{
 		unsigned long sensor_timestamp;
 		int new_data = 0;
 		
@@ -913,7 +913,8 @@ void MPU6050_FUNC2(void)
 		/* 如果满足条件则不执行循环体的剩余内容，跳出循环，执行下一次循环 */
 		if (!hal.sensors || !hal.new_gyro) 
 		{
-			continue;
+			//continue;
+			goto next;
 		}    
         if (hal.new_gyro && hal.lp_accel_mode) 
 		{
@@ -1012,8 +1013,9 @@ void MPU6050_FUNC2(void)
 			输出的格式见 eMPL_outputs.c 文件，这个函数在主机需要数据的时候调用即可，对频率无要求*/
             read_from_mpl();
         }
+		next: __NOP();//空指令
 		
-	}
+	//}
 }
 
 

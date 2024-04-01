@@ -29,16 +29,17 @@ int main(void)
 	OLED_ShowString(2, 1, "---------------");
 	OLED_ShowString(3, 3, "Designed By");
 	OLED_ShowString(4, 4, "Xiao Xing");
+	Delay_ms(500);
 	OLED_Clear();
 	MPU6050_FUNC1();
-	MPU6050_FUNC2();
-//	while(1)
-//	{
+	while(1)
+	{
 //		LED_ON();
 //		Delay_ms(1800);
 //		LED_OFF();
 //		Delay_ms(1800);
 //		while(!ADC_GetFlagStatus(ADC1,ADC_FLAG_EOC));  //等待转换完成
-//		printf("Voltage Measurement is %f V\r\n",ADC_GetConversionValue(ADC1)*3.3/4096);			
-//	}
+//		printf("Voltage Measurement is %f V\r\n",ADC_GetConversionValue(ADC1)*3.3/4096);
+		MPU6050_FUNC2();//mpu6050数据采集
+	}
 }
