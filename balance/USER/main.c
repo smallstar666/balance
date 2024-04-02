@@ -31,7 +31,9 @@ int main(void)
 	OLED_ShowString(4, 4, "Xiao Xing");
 	Delay_ms(500);
 	OLED_Clear();
-	MPU6050_FUNC1();
+	MPU6050_mpu_init();
+	MPU6050_mpl_init();
+	MPU6050_config();
 	while(1)
 	{
 //		LED_ON();

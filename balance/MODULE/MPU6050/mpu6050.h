@@ -174,4 +174,8 @@ void MPU6050_ReadReg(uint8_t reg_address,uint8_t *reg_data,uint8_t length);
 //-------------------------------------暂时保留-------------------------------------//
 int16_t MPU6050_GetData(uint8_t REG_Address);
 //-------------------------------------暂时保留-------------------------------------//
+										 
+uint8_t MPU6050_mpu_init(void);
+uint8_t MPU6050_mpl_init(void);
+uint8_t MPU6050_config(void);
 #endif

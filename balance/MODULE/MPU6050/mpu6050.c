@@ -1018,6 +1018,153 @@ void MPU6050_FUNC2(void)
 	//}
 }
 
+//注意：下面的几个函数和MPU6050_FUNC1功能一样，只是我这里又划分了一下，这样便于理解。
+//MPU初始化
+uint8_t MPU6050_mpu_init(void)
+{
+	inv_error_t result;
+	struct int_param_s int_param;
+	result = mpu_init(&int_param);
+	if (result)
+	{
+		#if USE_PRINTF_DEBUG
+			printf("Could not initialize gyro.result =  %d\n",result);
+		#endif
+		return 0;
+	}
+	else
+	{
+		#if USE_PRINTF_DEBUG
+			printf("mpu initialize Done\r\n");
+		#endif
+		return 1;
+	}
+}
 
+//MPL初始化
+uint8_t MPU6050_mpl_init(void)
+{
+    inv_error_t result;
+	result = inv_init_mpl();
+	if (result) 
+	{
+		#if USE_PRINTF_DEBUG
+			printf("Could not initialize MPL.\n");
+		#endif
+		return 0;
+	}
+	else
+	{
+		#if USE_PRINTF_DEBUG
+			printf("mpl initialize Done\r\n");	
+		#endif
+		return 1;
+	}
+}
 
+//配置初始化
+uint8_t MPU6050_config(void)
+{
+    inv_error_t result;
+    unsigned char accel_fsr;
+    unsigned short gyro_rate, gyro_fsr;
+	
+	/* 计算6轴和9轴传感器的四元数 */
+    inv_enable_quaternion();
+    inv_enable_9x_sensor_fusion();
+	
+    /* 无运动状态时更新陀螺仪 */
+    inv_enable_fast_nomot();
 
+    /* 当温度变化时更新陀螺仪数据 */
+    inv_enable_gyro_tc();
+
+	/* 允许 read_from_mpl 使用 MPL APIs */
+    inv_enable_eMPL_outputs();
+	
+	result = inv_start_mpl();
+	if (result == INV_ERROR_NOT_AUTHORIZED) 
+	{
+		while (1) 
+		{
+			printf("Not authorized.\n");
+		}
+	}
+	if (result) 
+	{
+		printf("Could not start the MPL.\n");
+	}
+
+    /* 设置寄存器，开启陀螺仪 */
+    /* 唤醒所有传感器*/
+    mpu_set_sensors(INV_XYZ_GYRO | INV_XYZ_ACCEL);
+    /* 将陀螺仪和加速度数据都送入FIFO */
+    mpu_configure_fifo(INV_XYZ_GYRO | INV_XYZ_ACCEL);
+    mpu_set_sample_rate(DEFAULT_MPU_HZ);
+	
+    /* 重新读取配置，确认前面的设置成功 */
+    mpu_get_sample_rate(&gyro_rate);
+    mpu_get_gyro_fsr(&gyro_fsr);
+    mpu_get_accel_fsr(&accel_fsr);
+	
+    /* 与MPL同步程序驱动程序配置 */
+    /* 设置每毫秒的采样率*/
+    inv_set_gyro_sample_rate(1000000L / gyro_rate);
+    inv_set_accel_sample_rate(1000000L / gyro_rate);
+
+	/* 设置芯片到主体的方向矩阵 */
+    /* 将硬件单位设置为 dps/g's/度 的比例因子 */   
+    inv_set_gyro_orientation_and_scale(inv_orientation_matrix_to_scalar(gyro_pdata.orientation),(long)gyro_fsr<<15);
+    inv_set_accel_orientation_and_scale(inv_orientation_matrix_to_scalar(gyro_pdata.orientation),(long)accel_fsr<<15);
+
+    /* 初始化硬件状态相关变量 */
+    hal.sensors = ACCEL_ON | GYRO_ON;
+
+    hal.dmp_on = 0;
+    hal.report = 0;
+    hal.rx.cmd = 0;
+    hal.next_pedo_ms = 0;
+    hal.next_compass_ms = 0;
+    hal.next_temp_ms = 0;
+
+    /* 初始化DMP步骤：
+     * 1. 调用dmp_load_motion_driver_firmware()
+		  它会把inv_mpu_dmp_motion_driver.h文件中的DMP固件写入到MPU的存储空间
+     * 2. 把陀螺仪和加速度计的原始数据矩阵送入DMP
+     * 3. 注册姿态回调函数，除非相应的特性使能了，否则该回调函数不会被执行
+     * 4. 调用 dmp_enable_feature(mask) 使能不同的特性
+     * 5. 调用 dmp_set_fifo_rate(freq) 设置DMP输出频率
+     * 6. 调用特定的特性控制相关的函数
+     *
+     * 调用 mpu_set_dmp_state(1)使能DMP，该函数可在DMP运行时被重复调用设置使能或关闭
+     *
+     * 以下是inv_mpu_dmp_motion_driver.c文件中DMP固件提供的特性的简介：
+  
+	 * DMP_FEATURE_LP_QUAT: 使用DMP以200Hz的频率产生一个只包含陀螺仪的四元数数据
+							以高速的状态解算陀螺仪数据，减少错误（相对于使用MCu以一个低采样率的方式采样）
+	 * DMP_FEATURE_6X_LP_QUAT: 使用DMP以200Hz的频率产生 陀螺仪/加速度计 四元数，它不能与前面的DMP_FEATURE_LP_QUAT同时使用
+	 * DMP_FEATURE_TAP: 检测 X，Y，和 Z 轴
+	 * DMP_FEATURE_ANDROID_ORIENT: 谷歌屏幕翻转算法，挡屏幕翻转时，在四个方向产生一个事件
+	 * DMP_FEATURE_GYRO_CAL: 若8s内都没有运动，计算陀螺仪数据
+	 * DMP_FEATURE_SEND_RAW_ACCEL: 添加原始加速度计数据到FIFO
+	 * DMP_FEATURE_SEND_RAW_GYRO: 添加原始陀螺仪数据到FIFO
+	 * DMP_FEATURE_SEND_CAL_GYRO: 添加校准后的陀螺仪数据到FIFO，不能与DMP_FEATURE_SEND_RAW_GYRO同时使用  
+     */
+    dmp_load_motion_driver_firmware();
+    dmp_set_orientation(inv_orientation_matrix_to_scalar(gyro_pdata.orientation));
+
+     /* 已知错误 -
+	    DMP启用后将以200Hz采样传感器数据，并以dmp_set_fifo_rate API中指定的速率传输到FIFO
+	    一旦将采样数据放入FIFO，DMP将发送一个中断，因此，如果dmp_set_fifo_rate为25Hz，则是来自MPU设备的25Hz中断。
+	    一个已知的问题：如果不启用DMP_FEATURE_TAP，则即使将FIFO速率设置为其他速率，中断也会以200Hz的频率运行
+	    为避免此问题，请包括DMP_FEATURE_TAP  */  
+	 /* DMP传感器融合仅适用于gyro at +-2000dps and accel +-2G */
+    hal.dmp_features = DMP_FEATURE_6X_LP_QUAT | DMP_FEATURE_TAP |
+        DMP_FEATURE_ANDROID_ORIENT | DMP_FEATURE_SEND_RAW_ACCEL | DMP_FEATURE_SEND_CAL_GYRO |
+        DMP_FEATURE_GYRO_CAL;
+    dmp_enable_feature(hal.dmp_features);
+    dmp_set_fifo_rate(DEFAULT_MPU_HZ);
+    mpu_set_dmp_state(1);
+	hal.dmp_on = 1;	
+	return 1;
+}
