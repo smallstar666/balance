@@ -9,20 +9,29 @@
 #include "SysTick.h"
 #include "EXTI.h"
 #include "bsp_i2c.h"
+#include "motor.h"
 #include "stdio.h"
+#include "sys.h"
 
 int main(void)
 {
-	SysTick_Init();//滴答器初始化
-	EXTIx_Init();//外部中断初始化
+	SysTick_Init();    //滴答器初始化
+	EXTIx_Init();      //外部中断初始化
 	LED_Init();        //小灯初始化
 	Delay_Init();      //延时初始化
 	Usart_Init(115200);//串口初始化
-	//ADC_init();        //ADC初始化
+	//ADC_init();      //ADC初始化
 	OLED_Init();       //OLED初始化
-	//PWM_Init(7199,0);  //(7199+1)*(0+1)/72000000hz =  0.0001s  换成频率为10khz
-	//TIM_SetCompare3(TIM3,3600);//设置PWM占空比
-	//TIM_SetCompare4(TIM3,3600);//设置PWM占空比
+	PWM_Init(7199,0);  //(7199+1)*(0+1)/72000000hz =  0.0001s  换成频率为10khz
+	Motor_Init();      //电机初始化
+	//-----------------------------------//
+	PAout(4) = 1;
+	PAout(5) = 0;
+	PBout(14) = 0;
+	PBout(15) = 1;
+	//-----------------------------------//
+	TIM_SetCompare3(TIM3,900);//设置PWM占空比
+	TIM_SetCompare4(TIM3,900);//设置PWM占空比
 	Software_I2C_GPIO_Config();//模拟I2C初始化
 	printf("Balance Car\r\n");
 	OLED_ShowString(1, 1, "Balance Car");
