@@ -10,13 +10,16 @@
 #include "EXTI.h"
 #include "bsp_i2c.h"
 #include "motor.h"
+#include "tim.h"
+#include "testpoint.h"
+#include "encoder.h"
 #include "stdio.h"
 #include "sys.h"
 
 int main(void)
 {
-	SysTick_Init();    //滴答器初始化
-	EXTIx_Init();      //外部中断初始化
+	//SysTick_Init();    //滴答器初始化
+	//EXTIx_Init();      //外部中断初始化
 	LED_Init();        //小灯初始化
 	Delay_Init();      //延时初始化
 	Usart_Init(115200);//串口初始化
@@ -30,8 +33,8 @@ int main(void)
 	PBout(14) = 0;
 	PBout(15) = 1;
 	//-----------------------------------//
-	TIM_SetCompare3(TIM3,900);//设置PWM占空比
-	TIM_SetCompare4(TIM3,900);//设置PWM占空比
+	TIM_SetCompare3(TIM3,500);//设置PWM占空比
+	TIM_SetCompare4(TIM3,500);//设置PWM占空比
 	Software_I2C_GPIO_Config();//模拟I2C初始化
 	printf("Balance Car\r\n");
 	OLED_ShowString(1, 1, "Balance Car");
@@ -40,9 +43,14 @@ int main(void)
 	OLED_ShowString(4, 4, "Xiao Xing");
 	Delay_ms(500);
 	OLED_Clear();
-	MPU6050_mpu_init();
-	MPU6050_mpl_init();
-	MPU6050_config();
+	//MPU6050_mpu_init();
+	//MPU6050_mpl_init();
+	//MPU6050_config();
+	TIM1_Init(7200-1,1000-1); //(7200-1+1)*(1000-1+1)/72000000hz =  0.1s = 100ms
+	//100ms溢出一次，实现每100ms计算一次转速
+	Encoder_TIM2_Init();
+	Encoder_TIM4_Init();
+	//TestPoint_Init();
 	while(1)
 	{
 //		LED_ON();
@@ -51,6 +59,6 @@ int main(void)
 //		Delay_ms(1800);
 //		while(!ADC_GetFlagStatus(ADC1,ADC_FLAG_EOC));  //等待转换完成
 //		printf("Voltage Measurement is %f V\r\n",ADC_GetConversionValue(ADC1)*3.3/4096);
-		MPU6050_FUNC2();//mpu6050数据采集
+//		MPU6050_FUNC2();//mpu6050数据采集
 	}
 }

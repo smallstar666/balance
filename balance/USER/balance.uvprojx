@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,EMPL_TARGET_STM32F1,MPU6050,MPL_LOG_NDEBUG=1,USE_DMP,EMPL</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CMSIS;..\FWLIB\inc;..\USER;..\SYSTEM\sys;..\HARDWARE\inc;..\MODULE\OLED;..\MODULE\PWM;..\MODULE\MOTOR;..\MODULE\I2C;..\MODULE\MPU6050;..\MODULE\Motion_Driver_6.12\driver\eMPL;..\MODULE\Motion_Driver_6.12\driver\include;..\MODULE\Motion_Driver_6.12\driver\stm32L;..\MODULE\Motion_Driver_6.12\eMPL-hal;..\MODULE\Motion_Driver_6.12\mllite;..\MODULE\Motion_Driver_6.12\mpl</IncludePath>
+              <IncludePath>..\CMSIS;..\FWLIB\inc;..\USER;..\SYSTEM\sys;..\HARDWARE\inc;..\MODULE\OLED;..\MODULE\PWM;..\MODULE\MOTOR;..\MODULE\I2C;..\MODULE\MPU6050;..\MODULE\Encoder;..\MODULE\Motion_Driver_6.12\driver\eMPL;..\MODULE\Motion_Driver_6.12\driver\include;..\MODULE\Motion_Driver_6.12\driver\stm32L;..\MODULE\Motion_Driver_6.12\eMPL-hal;..\MODULE\Motion_Driver_6.12\mllite;..\MODULE\Motion_Driver_6.12\mpl</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -578,6 +578,16 @@
               <FileName>ANO_DT.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\src\ANO_DT.c</FilePath>
+            </File>
+            <File>
+              <FileName>tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\src\tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>testpoint.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\src\testpoint.c</FilePath>
             </File>
           </Files>
         </Group>

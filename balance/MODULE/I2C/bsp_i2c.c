@@ -4,16 +4,16 @@
 #include "delay.h"
 
 //采用模拟I2C
-//PB6 SCL
-//PB7 SDA
-#define SCL_H         GPIOB->BSRR = GPIO_Pin_6
-#define SCL_L         GPIOB->BRR  = GPIO_Pin_6 
+//PA6 SCL
+//PA7 SDA
+#define SCL_H         GPIOA->BSRR = GPIO_Pin_6
+#define SCL_L         GPIOA->BRR  = GPIO_Pin_6 
    
-#define SDA_H         GPIOB->BSRR = GPIO_Pin_7
-#define SDA_L         GPIOB->BRR  = GPIO_Pin_7
+#define SDA_H         GPIOA->BSRR = GPIO_Pin_7
+#define SDA_L         GPIOA->BRR  = GPIO_Pin_7
 
-#define SCL_read      GPIOB->IDR  & GPIO_Pin_6
-#define SDA_read      GPIOB->IDR  & GPIO_Pin_7
+#define SCL_read      GPIOA->IDR  & GPIO_Pin_6
+#define SDA_read      GPIOA->IDR  & GPIO_Pin_7
 
 void I2C_delay(void)
 {
@@ -32,12 +32,12 @@ void Software_I2C_GPIO_Config(void)
 	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_6;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD; //开漏输出
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_7;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD; //开漏输出
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
 void I2C_Start(void)  //I2C开始波形
