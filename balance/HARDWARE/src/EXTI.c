@@ -39,7 +39,7 @@ static void EXTIx_NVIC_Config(void)
 	NVIC_InitTypeDef NVIC_InitStructure;
 
 	/* 嵌套向量中断控制器组选择 */
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1); 
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); 
 	
 	/* 配置中断源 */
 	NVIC_InitStructure.NVIC_IRQChannel = EXTI_IRQn;	
@@ -71,8 +71,8 @@ static void EXTIx_GPIO_Config(void)
 	
 	/* 配置I2C的GPIO引脚：I2C_INT */
 	GPIO_InitStructure.GPIO_Pin = EXTI_GPIO_PIN;
-	/* 设置引脚模式为浮空输入 */
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;	       
+	/* 设置引脚模式为上拉输入 */
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;	       
 	/* 初始化GPIOx */
 	GPIO_Init(EXTI_GPIO_PORT, &GPIO_InitStructure);
 	
@@ -96,8 +96,8 @@ static void EXTIx_Mode_Config(void)
 	EXTI_InitStructure.EXTI_Line = EXTI_LINE;
 	/* EXTI为中断模式 */
 	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-	/* 上升沿中断 */
-	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising; 
+	/* 下降沿中断 */
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling; 
 	/* 使能外部中断 */
 	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
 	/* 初始化EXTI外设 */
@@ -121,69 +121,4 @@ void EXTIx_Init(void)
 	/* EXTIx 工作模式配置 */
 	EXTIx_Mode_Config();	
 	
-}
-
-
-/**
- * @func	EXTIx_ENABLE
- * @brief	使能外部中断
- * @param 	无
- * @retval	无
- **/
-void EXTIx_ENABLE(void)
-{
-	EXTI_InitTypeDef EXTI_InitStructure;
-	/* 选择外部中断线 */
-	EXTI_InitStructure.EXTI_Line = EXTI_LINE;
-	/* EXTI为中断模式 */
-	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-	/* 上升沿中断 */
-	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-	/* 使能外部中断 */
-	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-	/* 初始化EXTI外设 */
-	EXTI_Init(&EXTI_InitStructure);
-}
-
-
-/**
- * @func	EXTIx_DISABLE
- * @brief	失能外部中断
- * @param 	无
- * @retval	无
- **/
-void EXTIx_DISABLE(void)
-{
-	EXTI_InitTypeDef EXTI_InitStructure;
-	/* 选择外部中断线 */
-	EXTI_InitStructure.EXTI_Line = EXTI_LINE;
-	/* EXTI为中断模式 */
-	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-	/* 上升沿中断 */
-	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-	/* 失能能外部中断 */
-	EXTI_InitStructure.EXTI_LineCmd = DISABLE;
-	/* 初始化EXTI外设 */
-	EXTI_Init(&EXTI_InitStructure);
-	/* 清除中断线上的中断标志位*/
-	EXTI_ClearITPendingBit(EXTI_LINE);
-}
-
-
-/*
- *函数名：EXTI_IRQHandler
- *描述  ：EXTIx 中断处理函数
- *输入  ：无
- *输出  ：无
- */
-void EXTI_IRQHandler(void)
-{
-	/* 判断是否产生了EXTI_Line中断 */
-	if(EXTI_GetITStatus(EXTI_LINE) != RESET) 	
-	{
-		gyro_data_ready_cb();	// 更新陀螺仪数据
-		
-		/* 清除中断标志位 */
-		EXTI_ClearITPendingBit(EXTI_LINE); 
-	}  
 }

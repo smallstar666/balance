@@ -98,8 +98,8 @@ void calc_motor_rotate_speed()
 	/* 转速(1秒钟转多少圈)=单位时间内的计数值/总分辨率*时间系数 */
 	rotateSpeed_L = (float)encoderNum_L/TOTAL_RESOLUTION*10;
 	
-	printf("encoder_L: %d\t speed_L:%.2f rps\r\n",encoderNum_L,rotateSpeed_L);
-	//OLED_ShowNum(1, 1, encoderNum_L, 5);
+	//printf("encoder_L: %d\t speed_L:%.2f rps\r\n",encoderNum_L,rotateSpeed_L);
+	OLED_ShowNum(2, 1, encoderNum_L, 5);
 	//OLED_ShowNum(2, 1, rotateSpeed_L, 5);
 	
 	/*读取编码器的值，正负代表旋转方向*/
@@ -107,7 +107,7 @@ void calc_motor_rotate_speed()
 	/* 转速(1秒钟转多少圈)=单位时间内的计数值/总分辨率*时间系数 */
 	rotateSpeed_R = (float)encoderNum_L/TOTAL_RESOLUTION*10;
 	
-	printf("encoder_R: %d\t speed_R:%.2f rps\r\n",encoderNum_R,rotateSpeed_R);
-	//OLED_ShowNum(1, 8, encoderNum_R, 5);
+	//printf("encoder_R: %d\t speed_R:%.2f rps\r\n",encoderNum_R,rotateSpeed_R);
+	OLED_ShowNum(2, 8, encoderNum_R, 5);
 	//OLED_ShowNum(2, 8, rotateSpeed_R, 5);	
 }

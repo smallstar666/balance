@@ -54,7 +54,7 @@
 #define NO_MOTION       (1)
 
 /* 默认采样率 */
-#define DEFAULT_MPU_HZ  (20)
+#define DEFAULT_MPU_HZ  (100)
 
 #define FLASH_SIZE      (512)
 #define FLASH_MEM_START ((void*)0x1800)
@@ -158,6 +158,7 @@ static struct platform_data_s compass_pdata = {
 void MPU6050_FUNC1(void);
 void MPU6050_FUNC2(void);	
 extern void gyro_data_ready_cb(void);
+void UpdateAngle(void);
 
 void InitMPU6050(void);
 
@@ -178,4 +179,8 @@ int16_t MPU6050_GetData(uint8_t REG_Address);
 uint8_t MPU6050_mpu_init(void);
 uint8_t MPU6050_mpl_init(void);
 uint8_t MPU6050_config(void);
+
+//得到角度和加速度进行PID调参
+extern float Pitch;
+extern short gyro[3];
 #endif

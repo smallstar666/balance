@@ -1168,3 +1168,89 @@ uint8_t MPU6050_config(void)
 	hal.dmp_on = 1;	
 	return 1;
 }
+
+
+float Pitch;					        //store angle value.
+short gyro[3];							//store angular velocity value.
+
+void UpdateAngle(void)
+{
+	unsigned long sensor_timestamp;
+	int new_data = 0;
+	unsigned long timestamp;
+	
+	 /* 获取时间戳 */
+	get_tick_count(&timestamp);
+
+	/* 温度数据不需要像陀螺仪数据那样每次都采样，这里设置隔一段时间采样 */
+	if (timestamp > hal.next_temp_ms) 
+	{
+		hal.next_temp_ms = timestamp + TEMP_READ_MS;
+		new_temp = 1;
+	}
+
+	if (hal.new_gyro && hal.dmp_on) 
+	{
+		short accel_short[3], sensors;
+		unsigned char more;
+		long accel[3], quat[4], temperature;
+		
+		/* 当使用DMP时，本函数从FIFO读取新数据，FIFO中存储了陀螺仪、加速度、四元数及手势数据，
+		   传感器参数可告知调用者哪个有了新数据 
+		   例如：if sensors == (INV_XYZ_GYRO | INV_WXYZ_QUAT)，那么FIFO中就不包含加速度数据
+		   手势数据的解算由是否产生手势运动事件来触发，若产生了事件，应用函数会使用回调函数来通知
+		   如果FIFO中有剩余数据包，则more参数为非零 */
+		dmp_read_fifo(gyro, accel_short, quat, &sensor_timestamp, &sensors, &more);
+		if (!more)
+			hal.new_gyro = 0;
+		if (sensors & INV_XYZ_GYRO) 
+		{
+			/* 将新数据推送到MPL */
+			inv_build_gyro(gyro, sensor_timestamp);
+			new_data = 1;
+			if (new_temp) 
+			{
+				new_temp = 0;
+				/* 温度仅用于陀螺仪温度补偿 */
+				mpu_get_temperature(&temperature, &sensor_timestamp);
+				inv_build_temp(temperature, sensor_timestamp);
+			}
+		}
+		if (sensors & INV_XYZ_ACCEL) 
+		{
+			accel[0] = (long)accel_short[0];
+			accel[1] = (long)accel_short[1];
+			accel[2] = (long)accel_short[2];
+			inv_build_accel(accel, 0, sensor_timestamp);
+			new_data = 1;
+		}
+		if (sensors & INV_WXYZ_QUAT) 
+		{
+			inv_build_quat(quat, 0, sensor_timestamp);
+			new_data = 1;
+		}
+	} 
+	if (new_data) 
+	{
+		inv_execute_on_data();
+
+		long data[9] = {0};
+		int8_t accuracy = 0;
+		if (inv_get_sensor_type_euler(data, &accuracy,(inv_time_t*)&timestamp))
+		{
+			/* 读出的数据类型是Q16格式，所以左移16位 */
+//			float Pitch = 0.0;
+			Pitch =data[0]*1.0/(1<<16) ;
+//			OLED_ShowString(1, 1, "Pitch:");
+//			OLED_ShowSignedNum(1, 7, Pitch, 3);
+//			float Roll = 0.0;;
+//			Roll = data[1]*1.0/(1<<16);
+//			OLED_ShowString(2, 1, "Roll :");
+//			OLED_ShowSignedNum(2, 7, Roll, 3);
+//			float Yaw = 0.0;;
+//			Roll = data[2]*1.0/(1<<16);
+//			OLED_ShowString(3, 1, "Yaw :");
+//			OLED_ShowSignedNum(3, 7, Yaw, 3);	
+		}
+	}
+}

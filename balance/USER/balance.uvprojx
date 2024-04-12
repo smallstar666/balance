@@ -589,6 +589,16 @@
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\src\testpoint.c</FilePath>
             </File>
+            <File>
+              <FileName>beep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\src\beep.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\src\user_led.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

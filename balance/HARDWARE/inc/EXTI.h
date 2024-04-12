@@ -18,7 +18,5 @@
 
 
 void EXTIx_Init(void);
-void EXTIx_ENABLE(void);
-void EXTIx_DISABLE(void);
 
 #endif /* __EXTI_H */
